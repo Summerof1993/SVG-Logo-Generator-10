@@ -1,9 +1,7 @@
 const inquirer = require("inquirer");
 const fs = require("fs");
-const Shapes = require("./lib/shapes");
-const Circle = require("./lib/shapes")
-const Triangle = require("./lib/shapes")
-const Rectangle = require("./lib/shapes")
+const { Shape, Circle, Triangle, Rectangle } = require("./lib/shapes");
+
 
 
 const questions = [
@@ -36,42 +34,50 @@ const questions = [
 
 function generateSvgFile(data) {
     if (data.shape.toLowerCase() === "circle") {
-        const newCircleSvg = new Circle(
+        let newCircleSvg = new Circle(
             data.shape,
             data.text,
             data.textColor,
             data.color
         );
+        return newCircleSvg.render();
     }
     else if (data.shape.toLowerCase() === "triangle") {
-        const newCircleSvg = new Triangle(
+        let newTriangleSvg = new Triangle(
             data.shape,
             data.text,
             data.textColor,
             data.color
         );
+        return newTriangleSvg.render();
     }
     else if (data.shape.toLowerCase() === "rectangle") {
-        const newCircleSvg = new Rectangle(
+        let newRectangleSvg = new Rectangle(
             data.shape,
             data.text,
             data.textColor,
             data.color
         );
+        return newRectangleSvg.render();
     };
 };
 
-function writeSvgFile (fileName, data) {
-    fs.writeFile(fileName, generateSvgFile(data), (err) => {
-        err ? console.error(err) : console.log( "Generated logo.svg")
-    })
+function writeSvgFile(fileName, data) {
+    fs.writeFile(fileName, generateSvgFile(data), (err) =>
+        err ? console.error(err) : console.log("Generated logo.svg"))
 }
 
 function init() {
     inquirer.prompt(questions)
-    .then((data) => 
-        writeSvgFile("logo.svg", data)
-    )
+        .then((data) => {
+            if (data.text.length > 3) {
+                throw new Error("text cannot be greater than 3 letters")
+            }
+            else {
+                writeSvgFile("./logo.svg", data)
+            }
+        }
+        )
 };
 
 init();
